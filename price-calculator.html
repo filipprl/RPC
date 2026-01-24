@@ -44,10 +44,7 @@ body {
     margin-bottom: 6px;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
-}
+h1 { text-align: center; }
 
 label {
     font-weight: 600;
@@ -64,9 +61,7 @@ input, select {
     border: 1px solid #ccc;
 }
 
-.section {
-    margin-top: 30px;
-}
+.section { margin-top: 30px; }
 
 .results {
     margin-top: 15px;
@@ -82,10 +77,7 @@ input, select {
     margin: 10px 0;
 }
 
-.total {
-    font-size: 22px;
-    font-weight: bold;
-}
+.total { font-size: 22px; font-weight: bold; }
 
 .highlight {
     font-size: 26px;
@@ -93,10 +85,7 @@ input, select {
     color: #0b5ed7;
 }
 
-.small {
-    font-size: 16px;
-    opacity: 0.8;
-}
+.small { font-size: 16px; opacity: 0.8; }
 </style>
 </head>
 
@@ -106,66 +95,58 @@ input, select {
     <!-- Retail Reference -->
     <div class="retail-reference">
         <strong>Retail Reference</strong>
-        Retail +10%: <span id="ref10">$0.00</span><br>
-        70% of +10%: <span id="ref10_70">$0.00</span><br><br>
-
-        Retail +15%: <span id="ref15">$0.00</span><br>
-        70% of +15%: <span id="ref15_70">$0.00</span><br><br>
-
-        Retail +20%: <span id="ref20">$0.00</span><br>
-        70% of +20%: <span id="ref20_70">$0.00</span>
+        +10%: <span id="r10">$0.00</span><br>
+        70% of (+10%): <span id="r10_70">$0.00</span><br>
+        +15%: <span id="r15">$0.00</span><br>
+        70% of (+15%): <span id="r15_70">$0.00</span><br>
+        +20%: <span id="r20">$0.00</span><br>
+        70% of (+20%): <span id="r20_70">$0.00</span>
     </div>
 
     <h1>Pricing Calculator</h1>
 
-    <!-- Base Price -->
     <label>Base Price ($)</label>
-    <input type="number" id="retailPrice" placeholder="Enter base price">
+    <input type="number" id="basePrice" placeholder="Enter base price">
 
-    <!-- Discount selector -->
-    <label>Discount / Savings</label>
-    <select id="discountType">
+    <label>Discount</label>
+    <select id="discount">
         <option value="0">No Discount</option>
-        <option value="1.10">10% Off Retail</option>
-        <option value="1.15">15% Off Retail</option>
-        <option value="1.20">20% Off Retail</option>
+        <option value="0.10">10% OFF</option>
+        <option value="0.15">15% OFF</option>
+        <option value="0.20">20% OFF</option>
     </select>
 
-    <!-- Savings -->
     <div class="results">
         <div class="result-line">
             <span>You Save</span>
-            <span id="savingsAmount">$0.00 (0.00%)</span>
+            <span id="savings">$0.00</span>
         </div>
         <div class="result-line total">
             <span>Promo Price</span>
-            <span id="promoPrice">$0.00</span>
+            <span id="promo">$0.00</span>
         </div>
     </div>
 
-    <!-- Down Payment -->
     <div class="section">
         <label>Down Payment (10%)</label>
         <div class="results">
             <div class="result-line total">
                 <span>Due Today</span>
-                <span id="downPayment">$0.00</span>
+                <span id="down">$0.00</span>
             </div>
         </div>
     </div>
 
-    <!-- After Down -->
     <div class="section">
-        <label>Price After 10% Down</label>
+        <label>Price After Down</label>
         <div class="results">
             <div class="result-line total">
-                <span>Remaining Price</span>
-                <span id="afterDown">$0.00</span>
+                <span>Remaining</span>
+                <span id="remaining">$0.00</span>
             </div>
         </div>
     </div>
 
-    <!-- Financing -->
     <div class="section">
         <label>Financing Option</label>
         <div class="results">
@@ -182,7 +163,7 @@ input, select {
                 <span id="monthlyPayment">$0.00 / mo</span>
             </div>
             <div class="small">
-                *Based on remaining balance after down payment
+                *Based on promo price minus 10% down payment
             </div>
         </div>
     </div>
@@ -191,71 +172,61 @@ input, select {
 
 <script>
 function calculate() {
-    const base = parseFloat(document.getElementById("retailPrice").value) || 0;
-    const factor = parseFloat(document.getElementById("discountType").value);
+    const base = parseFloat(document.getElementById("basePrice").value) || 0;
+    const discountRate = parseFloat(document.getElementById("discount").value);
 
-    /* Retail references */
-    const r10 = base * 1.10;
-    const r15 = base * 1.15;
-    const r20 = base * 1.20;
+    // Calculate Retail Reference to match exact discount
+    const retailRefs = {
+        10: base / (1 - 0.10), // increase so that 10% off returns to base
+        15: base / (1 - 0.15),
+        20: base / (1 - 0.20)
+    };
 
-    document.getElementById("ref10").textContent = `$${r10.toFixed(2)}`;
-    document.getElementById("ref10_70").textContent = `$${(r10 * 0.70).toFixed(2)}`;
-    document.getElementById("ref15").textContent = `$${r15.toFixed(2)}`;
-    document.getElementById("ref15_70").textContent = `$${(r15 * 0.70).toFixed(2)}`;
-    document.getElementById("ref20").textContent = `$${r20.toFixed(2)}`;
-    document.getElementById("ref20_70").textContent = `$${(r20 * 0.70).toFixed(2)}`;
+    // Update retail reference
+    document.getElementById("r10").textContent = `$${retailRefs[10].toFixed(2)}`;
+    document.getElementById("r10_70").textContent = `$${(retailRefs[10]*0.70).toFixed(2)}`;
+    document.getElementById("r15").textContent = `$${retailRefs[15].toFixed(2)}`;
+    document.getElementById("r15_70").textContent = `$${(retailRefs[15]*0.70).toFixed(2)}`;
+    document.getElementById("r20").textContent = `$${retailRefs[20].toFixed(2)}`;
+    document.getElementById("r20_70").textContent = `$${(retailRefs[20]*0.70).toFixed(2)}`;
 
-    /* Determine displayed retail */
-    let displayedRetail = base;
-    if (factor > 0) displayedRetail = base * factor;
+    // Calculate "You Save" = Base Price × Discount Rate
+    const savingsAmount = base * discountRate;
 
-    /* Promo pricing */
-    const promoPrice = base;
-    const savingsAmount = displayedRetail - promoPrice;
-    const savingsPercent = displayedRetail > 0
-        ? (savingsAmount / displayedRetail) * 100
-        : 0;
+    // Promo Price = Base Price − You Save
+    const promo = base - savingsAmount;
 
-    document.getElementById("promoPrice").textContent =
-        `$${promoPrice.toFixed(2)}`;
+    document.getElementById("savings").textContent = `$${savingsAmount.toFixed(2)}`;
+    document.getElementById("promo").textContent = `$${promo.toFixed(2)}`;
 
-    document.getElementById("savingsAmount").textContent =
-        `$${savingsAmount.toFixed(2)} (${savingsPercent.toFixed(2)}%)`;
+    // Down payment
+    const down = promo * 0.10;
+    document.getElementById("down").textContent = `$${down.toFixed(2)}`;
+    document.getElementById("remaining").textContent = `$${(promo - down).toFixed(2)}`;
 
-    /* Down payment */
-    const downPayment = promoPrice * 0.10;
-    const afterDown = promoPrice - downPayment;
-
-    document.getElementById("downPayment").textContent =
-        `$${downPayment.toFixed(2)}`;
-
-    document.getElementById("afterDown").textContent =
-        `$${afterDown.toFixed(2)}`;
-
-    /* Financing */
+    // Financing
+    const financedAmount = promo - down;
     const annualRate = 0.0999;
     const monthlyRate = annualRate / 12;
     const months = 120;
-
-    let payment = 0;
-    if (afterDown > 0) {
-        payment =
-            afterDown *
+    let monthlyPayment = 0;
+    if (financedAmount > 0) {
+        monthlyPayment =
+            financedAmount *
             (monthlyRate * Math.pow(1 + monthlyRate, months)) /
             (Math.pow(1 + monthlyRate, months) - 1);
     }
-
-    document.getElementById("monthlyPayment").textContent =
-        `$${payment.toFixed(2)} / mo`;
+    document.getElementById("monthlyPayment").textContent = `$${monthlyPayment.toFixed(2)} / mo`;
 }
 
-document.querySelectorAll("input, select").forEach(el => {
-    el.addEventListener("input", calculate);
-});
+document.querySelectorAll("input, select").forEach(el =>
+    el.addEventListener("input", calculate)
+);
 </script>
 
 </body>
 </html>
+
+
 
 
