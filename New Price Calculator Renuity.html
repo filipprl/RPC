@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Calculator</title>
+
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    position: relative;
+}
+
+.retail-reference {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: #eef2ff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.retail-reference strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 16px;
+    font-size: 20px;
+    margin-top: 8px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+}
+
+.section {
+    margin-top: 30px;
+}
+
+.results {
+    margin-top: 15px;
+    background: #f0f4ff;
+    padding: 20px;
+    border-radius: 14px;
+}
+
+.result-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.total {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.highlight {
+    font-size: 26px;
+    font-weight: bold;
+    color: #0b5ed7;
+}
+
+.small {
+    font-size: 16px;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- Retail Reference -->
+    <div class="retail-reference">
+        <strong>Retail Reference</strong>
+        Retail +10%: <span id="ref10">$0.00</span><br>
+        70% of +10%: <span id="ref10_70">$0.00</span><br><br>
+
+        Retail +15%: <span id="ref15">$0.00</span><br>
+        70% of +15%: <span id="ref15_70">$0.00</span><br><br>
+
+        Retail +20%: <span id="ref20">$0.00</span><br>
+        70% of +20%: <span id="ref20_70">$0.00</span>
+    </div>
+
+    <h1>Pricing Calculator</h1>
+
+    <!-- Base Price -->
+    <label>Base Price ($)</label>
+    <input type="number" id="retailPrice" placeholder="Enter base price">
+
+    <!-- Discount selector -->
+    <label>Discount / Savings</label>
+    <select id="discountType">
+        <option value="0">No Discount</option>
+        <option value="1.10">10% Off Retail</option>
+        <option value="1.15">15% Off Retail</option>
+        <option value="1.20">20% Off Retail</option>
+    </select>
+
+    <!-- Savings -->
+    <div class="results">
+        <div class="result-line">
+            <span>You Save</span>
+            <span id="savingsAmount">$0.00 (0.00%)</span>
+        </div>
+        <div class="result-line total">
+            <span>Promo Price</span>
+            <span id="promoPrice">$0.00</span>
+        </div>
+    </div>
+
+    <!-- Down Payment -->
+    <div class="section">
+        <label>Down Payment (10%)</label>
+        <div class="results">
+            <div class="result-line total">
+                <span>Due Today</span>
+                <span id="downPayment">$0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- After Down -->
+    <div class="section">
+        <label>Price After 10% Down</label>
+        <div class="results">
+            <div class="result-line total">
+                <span>Remaining Price</span>
+                <span id="afterDown">$0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financing -->
+    <div class="section">
+        <label>Financing Option</label>
+        <div class="results">
+            <div class="result-line">
+                <span>Term</span>
+                <span>120 Months</span>
+            </div>
+            <div class="result-line">
+                <span>APR</span>
+                <span>9.99%</span>
+            </div>
+            <div class="result-line highlight">
+                <span>Estimated Monthly Payment</span>
+                <span id="monthlyPayment">$0.00 / mo</span>
+            </div>
+            <div class="small">
+                *Based on remaining balance after down payment
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function calculate() {
+    const base = parseFloat(document.getElementById("retailPrice").value) || 0;
+    const factor = parseFloat(document.getElementById("discountType").value);
+
+    /* Retail references */
+    const r10 = base * 1.10;
+    const r15 = base * 1.15;
+    const r20 = base * 1.20;
+
+    document.getElementById("ref10").textContent = `$${r10.toFixed(2)}`;
+    document.getElementById("ref10_70").textContent = `$${(r10 * 0.70).toFixed(2)}`;
+    document.getElementById("ref15").textContent = `$${r15.toFixed(2)}`;
+    document.getElementById("ref15_70").textContent = `$${(r15 * 0.70).toFixed(2)}`;
+    document.getElementById("ref20").textContent = `$${r20.toFixed(2)}`;
+    document.getElementById("ref20_70").textContent = `$${(r20 * 0.70).toFixed(2)}`;
+
+    /* Determine displayed retail */
+    let displayedRetail = base;
+    if (factor > 0) displayedRetail = base * factor;
+
+    /* Promo pricing */
+    const promoPrice = base;
+    const savingsAmount = displayedRetail - promoPrice;
+    const savingsPercent = displayedRetail > 0
+        ? (savingsAmount / displayedRetail) * 100
+        : 0;
+
+    document.getElementById("promoPrice").textContent =
+        `$${promoPrice.toFixed(2)}`;
+
+    document.getElementById("savingsAmount").textContent =
+        `$${savingsAmount.toFixed(2)} (${savingsPercent.toFixed(2)}%)`;
+
+    /* Down payment */
+    const downPayment = promoPrice * 0.10;
+    const afterDown = promoPrice - downPayment;
+
+    document.getElementById("downPayment").textContent =
+        `$${downPayment.toFixed(2)}`;
+
+    document.getElementById("afterDown").textContent =
+        `$${afterDown.toFixed(2)}`;
+
+    /* Financing */
+    const annualRate = 0.0999;
+    const monthlyRate = annualRate / 12;
+    const months = 120;
+
+    let payment = 0;
+    if (afterDown > 0) {
+        payment =
+            afterDown *
+            (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+            (Math.pow(1 + monthlyRate, months) - 1);
+    }
+
+    document.getElementById("monthlyPayment").textContent =
+        `$${payment.toFixed(2)} / mo`;
+}
+
+document.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", calculate);
+});
+</script>
+
+</body>
+</html>
