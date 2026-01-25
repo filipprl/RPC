@@ -23,16 +23,28 @@ body {
     position: relative;
 }
 
-.retail-reference {
+.toggle-btn {
     position: absolute;
     top: 18px;
     right: 18px;
+    background: #0b5ed7;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.retail-reference {
+    margin-top: 50px;
     background: #eef2ff;
     border-radius: 12px;
     padding: 14px 16px;
     font-size: 14px;
     line-height: 1.5;
     box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    display: none;
 }
 
 .retail-reference strong {
@@ -88,15 +100,20 @@ input, select {
 <body>
 <div class="container">
 
+    <button class="toggle-btn" onclick="toggleRetail()">Filipp R Loginova</button>
+
     <!-- Retail Reference -->
-    <div class="retail-reference">
+    <div class="retail-reference" id="retailBox">
         <strong>Retail Reference</strong>
+
         +10%: <span id="r10">$0.00</span><br>
-        70% of (+10%): <span id="r10_70">$0.00</span><br>
+        PAR : <span id="par">$0.00</span><br><br>
+
         +15%: <span id="r15">$0.00</span><br>
-        70% of (+15%): <span id="r15_70">$0.00</span><br>
+        PAR : <span id="par2">$0.00</span><br><br>
+
         +20%: <span id="r20">$0.00</span><br>
-        70% of (+20%): <span id="r20_70">$0.00</span>
+        PAR : <span id="par3">$0.00</span>
     </div>
 
     <h1>
@@ -169,32 +186,35 @@ input, select {
 </div>
 
 <script>
+function toggleRetail() {
+    const box = document.getElementById("retailBox");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
 function calculate() {
     const base = parseFloat(document.getElementById("basePrice").value) || 0;
     const discountRate = parseFloat(document.getElementById("discount").value);
 
-    // Calculate Retail Reference to match exact discount
-    const retailRefs = {
-        10: base / (1 - 0.10), // increase so that 10% off returns to base
-        15: base / (1 - 0.15),
-        20: base / (1 - 0.20)
-    };
+    // Retail references (anchor math)
+    const r10 = base / 0.9;
+    const r15 = base / 0.85;
+    const r20 = base / 0.8;
 
-    // Update retail reference
-    document.getElementById("r10").textContent = `$${retailRefs[10].toFixed(2)}`;
-    document.getElementById("r10_70").textContent = `$${(retailRefs[10]*0.70).toFixed(2)}`;
-    document.getElementById("r15").textContent = `$${retailRefs[15].toFixed(2)}`;
-    document.getElementById("r15_70").textContent = `$${(retailRefs[15]*0.70).toFixed(2)}`;
-    document.getElementById("r20").textContent = `$${retailRefs[20].toFixed(2)}`;
-    document.getElementById("r20_70").textContent = `$${(retailRefs[20]*0.70).toFixed(2)}`;
+    document.getElementById("r10").textContent = `$${r10.toFixed(2)}`;
+    document.getElementById("r15").textContent = `$${r15.toFixed(2)}`;
+    document.getElementById("r20").textContent = `$${r20.toFixed(2)}`;
 
-    // Calculate "You Save" = Base Price × Discount Rate
-    const savingsAmount = base * discountRate;
+    // PAR is ALWAYS 70% of BASE
+    const par = base * 0.70;
+    document.getElementById("par").textContent = `$${par.toFixed(2)}`;
+    document.getElementById("par2").textContent = `$${par.toFixed(2)}`;
+    document.getElementById("par3").textContent = `$${par.toFixed(2)}`;
 
-    // Promo Price = Base Price − You Save
-    const promo = base - savingsAmount;
+    // Discount math (real and transparent)
+    const savings = base * discountRate;
+    const promo = base - savings;
 
-    document.getElementById("savings").textContent = `$${savingsAmount.toFixed(2)}`;
+    document.getElementById("savings").textContent = `$${savings.toFixed(2)}`;
     document.getElementById("promo").textContent = `$${promo.toFixed(2)}`;
 
     // Down payment
@@ -203,18 +223,21 @@ function calculate() {
     document.getElementById("remaining").textContent = `$${(promo - down).toFixed(2)}`;
 
     // Financing
-    const financedAmount = promo - down;
+    const financed = promo - down;
     const annualRate = 0.0999;
     const monthlyRate = annualRate / 12;
     const months = 120;
-    let monthlyPayment = 0;
-    if (financedAmount > 0) {
-        monthlyPayment =
-            financedAmount *
+
+    let payment = 0;
+    if (financed > 0) {
+        payment =
+            financed *
             (monthlyRate * Math.pow(1 + monthlyRate, months)) /
             (Math.pow(1 + monthlyRate, months) - 1);
     }
-    document.getElementById("monthlyPayment").textContent = `$${monthlyPayment.toFixed(2)} / mo`;
+
+    document.getElementById("monthlyPayment").textContent =
+        `$${payment.toFixed(2)} / mo`;
 }
 
 document.querySelectorAll("input, select").forEach(el =>
@@ -224,4 +247,3 @@ document.querySelectorAll("input, select").forEach(el =>
 
 </body>
 </html>
-
