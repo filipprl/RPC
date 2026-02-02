@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,6 +99,17 @@ color: #0b5ed7;
 }
 
 .small { font-size: 16px; opacity: 0.8; }
+
+/* Logo link fixes */
+.logo-link {
+  display: inline-block; /* only wraps the image */
+  text-decoration: none; /* remove underline */
+  color: inherit;        /* keep original text color */
+}
+.logo-link img {
+  display: block;        /* removes small gap below image */
+  border: none;          /* removes any border in some browsers */
+}
 </style>
 </head>
 <body>
@@ -123,8 +133,9 @@ PAR : <span id="par3">$0.00</span>
 </div>
 
 <h1>
-<a href="presentation.html" target="_blank">
-<img src="renew.png" alt="Pricing Calculator" style="max-width:260px; width:100%;">
+  <a href="presentation.html" target="_blank" class="logo-link">
+    <img src="renew.png" alt="Pricing Calculator" style="max-width:260px; width:100%;">
+  </a>
 </h1>
 
 <label>Base Price ($)</label>
@@ -299,8 +310,3 @@ calculate();
 
 </body>
 </html>
-
-
-
-
-
