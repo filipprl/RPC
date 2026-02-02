@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Photo Presentation</title>
+<title>Photo Presentation</title> <!-- <-- Browser tab title -->
 <style>
 html, body {
     margin: 0;
@@ -16,7 +16,7 @@ html, body {
     color: #fff;
 }
 
-/* Logo at top */
+/* Logo at top of page */
 .logo-container {
     position: fixed;
     top: 20px;
@@ -55,7 +55,7 @@ html, body {
 .slide img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* maintains aspect ratio */
+    object-fit: contain;
     background: #111;
 }
 
@@ -90,7 +90,6 @@ html, body {
     width: 100%;
     text-align: center;
     z-index: 20;
-    flex-wrap: wrap;
 }
 
 .dot {
@@ -161,17 +160,14 @@ html, body {
 let slideIndex = 1;
 showSlides(slideIndex);
 
-// Next/previous controls
 function plusSlides(n) {
   showSlides(slideIndex += n);
 }
 
-// Dot controls
 function currentSlide(n) {
   showSlides(slideIndex = n);
 }
 
-// Show slides
 function showSlides(n) {
   const slides = document.getElementsByClassName("slide");
   const dots = document.getElementsByClassName("dot");
@@ -186,8 +182,6 @@ function showSlides(n) {
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
 }
-
-// Auto-slide removed
 </script>
 
 </body>
