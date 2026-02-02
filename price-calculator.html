@@ -1,365 +1,304 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pricing Calculator + Checklist Sidebar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Calculator</title>
 
 <style>
-/* ---------- GENERAL ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f7fa; margin: 0; }
-.container { display: flex; min-height: 100vh; }
-
-/* ---------- SIDEBAR ---------- */
-.sidebar {
-    width: 80px;
-    background: #0b5ed7;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 5px;
-    gap: 12px;
-    border-radius: 0 18px 18px 0;
-    align-items: center;
+*, *::before, *::after {
+box-sizing: border-box;
 }
 
-.sidebar button {
-    background: #0b5ed7;
-    color: #fff;
-    border: none;
-    padding: 14px 0;
-    font-size: 20px;
-    font-weight: 600;
-    border-radius: 12px;
-    cursor: pointer;
-    width: 100%;
-    text-align: center;
-    transition: 0.2s;
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+background: #f5f7fa;
+margin: 0;
+padding: 20px;
 }
 
-.sidebar button.active, .sidebar button:hover {
-    background: #094bb5;
+.container {
+max-width: 850px;
+margin: auto;
+background: #ffffff;
+padding: 28px;
+border-radius: 18px;
+box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+position: relative;
 }
 
-/* ---------- MAIN CONTENT ---------- */
-.main {
-    flex: 1;
-    padding: 28px;
-    overflow-x: auto;
+.toggle-btn {
+position: absolute;
+top: 18px;
+right: 18px;
+background: #0b5ed7;
+color: #fff;
+border: none;
+border-radius: 10px;
+padding: 8px 12px;
+font-size: 14px;
+cursor: pointer;
 }
 
-/* ---------- TAB CONTENT ---------- */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+.retail-reference {
+margin-top: 50px;
+background: #eef2ff;
+border-radius: 12px;
+padding: 14px 16px;
+font-size: 14px;
+line-height: 1.5;
+box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+display: none;
+}
 
-/* ---------- CALCULATOR STYLES ---------- */
-.toggle-btn { position: absolute; top: 18px; right: 18px; background: #0b5ed7; color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
-.retail-reference { margin-top: 50px; background: #eef2ff; border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.5; box-shadow: 0 6px 14px rgba(0,0,0,0.08); display: none; }
+.retail-reference strong {
+display: block;
+margin-bottom: 6px;
+}
+
 h1 { text-align: center; }
-label { font-weight: 600; display: block; margin-top: 20px; }
-input, select { width: 100%; padding: 16px; font-size: 20px; margin-top: 8px; border-radius: 12px; border: 1px solid #ccc; }
-.section { margin-top: 30px; }
-.results { margin-top: 15px; background: #f0f4ff; padding: 14px; border-radius: 14px; }
-.result-line { display: flex; justify-content: space-between; font-size: 18px; margin: 6px 0; }
-.total { font-size: 22px; font-weight: bold; }
-.highlight { font-size: 26px; font-weight: bold; color: #0b5ed7; }
-.small { font-size: 16px; opacity: 0.8; }
 
-/* ---------- CHECKLIST STYLES ---------- */
-.checklist-container { background: #eef6f8; padding: 20px; border-radius: 18px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
-.checklist-container h1 { font-size: 32px; color: #2f4f8f; text-align: center; margin-bottom: 6px; }
-.checklist-container p { text-align: center; font-size: 18px; color: #5a6b8a; margin-bottom: 18px; }
-.customer-name { margin-top: 18px; }
-.customer-name label { display: block; font-size: 16px; margin-bottom: 6px; color: #29427a; }
-.customer-name input { width: 100%; padding: 12px 14px; font-size: 16px; border-radius: 10px; border: 1px solid #cbd9e5; }
-.checklist { padding: 6px 0; }
-.item { display: flex; align-items: flex-start; padding: 18px 22px; border-top: 1px solid #d7e6ee; gap: 14px; background: #eef6f8; }
-.item:first-child { border-top: none; }
-.item input[type="checkbox"] { width: 22px; height: 22px; margin-top: 3px; cursor: pointer; flex-shrink: 0; }
-.item label { font-size: 18px; color: #29427a; cursor: pointer; line-height: 1.4; }
-.item input:checked + label { text-decoration: line-through; color: #7a8ca8; }
-.reset-area { text-align: center; padding: 18px 22px 22px; }
-.reset-area button { background: #2f4f8f; color: white; border: none; padding: 14px 26px; font-size: 16px; border-radius: 10px; cursor: pointer; }
-.reset-area button:hover { background: #233a6d; }
-
-/* ---------- RESPONSIVE ---------- */
-@media(max-width: 768px){
-    .sidebar { width: 60px; }
-    .sidebar button { font-size: 18px; padding: 12px 0; }
-    input, select { font-size: 16px; padding: 12px; }
-    .results { padding: 12px; }
-    .result-line { font-size: 16px; }
-    .total { font-size: 20px; }
-    .highlight { font-size: 22px; }
-    .checklist-container h1 { font-size: 28px; }
-    .checklist-container p { font-size: 16px; }
-    .item label { font-size: 16px; }
+label {
+font-weight: 600;
+display: block;
+margin-top: 20px;
 }
+
+input, select {
+width: 100%;
+padding: 16px;
+font-size: 20px;
+margin-top: 8px;
+border-radius: 12px;
+border: 1px solid #ccc;
+}
+
+.section { margin-top: 30px; }
+
+/* 🔹 BLUE BOXES – made thinner here */
+.results {
+margin-top: 15px;
+background: #f0f4ff;
+padding: 14px; /* was 20px */
+border-radius: 14px;
+}
+
+.result-line {
+display: flex;
+justify-content: space-between;
+font-size: 18px;
+margin: 6px 0; /* was 10px */
+}
+
+.total { font-size: 22px; font-weight: bold; }
+
+.highlight {
+font-size: 26px;
+font-weight: bold;
+color: #0b5ed7;
+}
+
+.small { font-size: 16px; opacity: 0.8; }
 </style>
 </head>
-
 <body>
+
 <div class="container">
 
-<!-- ---------- SIDEBAR ---------- -->
-<div class="sidebar">
-    <button class="active" onclick="openTab(event,'pricingTab')">P</button>
-    <button onclick="openTab(event,'checklistTab')">C</button>
+<button class="toggle-btn" onclick="toggleRetail()">Filipp R Loginova</button>
+
+<!-- Retail Reference -->
+<div class="retail-reference" id="retailBox">
+<strong>Retail Reference</strong>
+
++10%: <span id="r10">$0.00</span><br>
+PAR : <span id="par">$0.00</span><br><br>
+
++15%: <span id="r15">$0.00</span><br>
+PAR : <span id="par2">$0.00</span><br><br>
+
++20%: <span id="r20">$0.00</span><br>
+PAR : <span id="par3">$0.00</span>
 </div>
 
-<!-- ---------- MAIN ---------- -->
-<div class="main">
+<h1>
+<img src="renew.png" alt="Pricing Calculator" style="max-width:260px; width:100%;">
+</h1>
 
-<!-- ---------- TAB 1 – CALCULATOR ---------- -->
-<div id="pricingTab" class="tab-content active">
-    <button class="toggle-btn" onclick="toggleRetail()">Filipp R Loginova</button>
+<label>Base Price ($)</label>
+<input type="number" id="basePrice" placeholder="Enter base price">
 
-    <div class="retail-reference" id="retailBox">
-        <strong>Retail Reference</strong>
-        +10%: <span id="r10">$0.00</span><br>
-        PAR : <span id="par">$0.00</span><br><br>
-        +15%: <span id="r15">$0.00</span><br>
-        PAR : <span id="par2">$0.00</span><br><br>
-        +20%: <span id="r20">$0.00</span><br>
-        PAR : <span id="par3">$0.00</span>
-    </div>
+<label>Discount</label>
+<select id="discount">
+<option value="0">No Discount</option>
+<option value="0.05">05% OFF</option>
+<option value="0.10">10% OFF</option>
+<option value="0.15">15% OFF</option>
+<option value="0.20">20% OFF</option>
+</select>
 
-    <h1><img src="renew.png" alt="Pricing Calculator" style="max-width:260px; width:100%;"></h1>
-
-    <label>Base Price ($)</label>
-    <input type="number" id="basePrice" placeholder="Enter base price">
-
-    <label>Discount</label>
-    <select id="discount">
-        <option value="0">No Discount</option>
-        <option value="0.05">05% OFF</option>
-        <option value="0.10">10% OFF</option>
-        <option value="0.15">15% OFF</option>
-        <option value="0.20">20% OFF</option>
-    </select>
-
-    <div class="results">
-        <div class="result-line">
-            <span>You Save</span>
-            <span id="savings">$0.00</span>
-        </div>
-        <div class="result-line total">
-            <span>Promo Price</span>
-            <span id="promo">$0.00</span>
-        </div>
-    </div>
-
-    <div class="section">
-        <label>Payment Method</label>
-        <select id="paymentMethod">
-            <option value="finance" selected>Financing</option>
-            <option value="cash">Cash (Debit / Credit / Check)*</option>
-        </select>
-    </div>
-
-    <div class="section" id="financeSection">
-        <label>Down Payment</label>
-        <div class="results">
-            <div class="result-line total">
-                <span>10% of Promo Price</span>
-                <span id="down">$0.00</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="section" id="remainingSection">
-        <label>Balance after Down Payment</label>
-        <div class="results">
-            <div class="result-line total">
-                <span>Remaining Balance</span>
-                <span id="remaining">$0.00</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="section" id="financingOption">
-        <label>Financing Options (Ask for 0 payments and 0% for 12 Months)</label>
-        <div class="results">
-            <div class="result-line">
-                <span>Term</span>
-                <span>120 Months</span>
-            </div>
-            <div class="result-line">
-                <span>var APR</span>
-                <span>9.99%</span>
-            </div>
-            <div class="result-line highlight">
-                <span>Estimated Monthly Payment *</span>
-                <span id="monthlyPayment">$0.00 / mo</span>
-            </div>
-            <div class="small">
-                *Based on promo price minus 10% down payment and var APR
-            </div>
-        </div>
-    </div>
-
-    <div class="section" id="cashSection" style="display:none;">
-        <label>Cash Payment Schedule</label>
-        <div class="results">
-            <div class="result-line total">
-                <span>Down Payment (1/3 of Promo Price)</span>
-                <span id="cashDown">$0.00</span>
-            </div>
-            <div class="result-line total">
-                <span>Due on Installation Day</span>
-                <span id="cashInstall">$0.00</span>
-            </div>
-            <div class="result-line highlight">
-                <span>Total Price</span>
-                <span id="cashTotal">$0.00</span>
-            </div>
-            <div class="small">
-                *Payments made by credit card are subject to 2.85% fee
-            </div>
-        </div>
-    </div>
+<div class="results">
+<div class="result-line">
+<span>You Save</span>
+<span id="savings">$0.00</span>
+</div>
+<div class="result-line total">
+<span>Promo Price</span>
+<span id="promo">$0.00</span>
+</div>
 </div>
 
-<!-- ---------- TAB 2 – CHECKLIST ---------- -->
-<div id="checklistTab" class="tab-content">
-    <div class="checklist-container">
-        <h1>Checklist</h1>
-        <p>Must be done prior to leaving the home!</p>
-
-        <div class="customer-name">
-            <label for="customer">Customer Name</label>
-            <input type="text" id="customer" placeholder="Enter customer name">
-        </div>
-
-        <div class="checklist">
-            <div class="item">
-                <input type="checkbox" id="c1">
-                <label for="c1">Finance documents signed by homeowner when applicable</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c2">
-                <label for="c2">Result the sale</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c3">
-                <label for="c3">Review contract details with HO for accuracy</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c4">
-                <label for="c4">Button up</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c5">
-                <label for="c5">Both you and HO sign contract</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c6">
-                <label for="c6">Email contract with welcome letter</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c7">
-                <label for="c7">Review welcome letter and communicate proper contact information and common questions</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c8">
-                <label for="c8">Collect down payment in AppSimple</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c9">
-                <label for="c9">Take and upload clear photos of survey and the entire job site</label>
-            </div>
-            <div class="item">
-                <input type="checkbox" id="c10">
-                <label for="c10">Job well done / medium rare</label>
-            </div>
-        </div>
-
-        <div class="reset-area">
-            <button onclick="resetChecklist()">Reset Checklist</button>
-        </div>
-    </div>
+<!-- Payment Method Dropdown above Down Payment -->
+<div class="section">
+<label>Payment Method</label>
+<select id="paymentMethod">
+<option value="finance" selected>Financing</option>
+<option value="cash">Cash (Debit / Credit / Check)*</option>
+</select>
 </div>
 
-</div> <!-- main -->
-</div> <!-- container -->
+<div class="section" id="financeSection">
+<label>Down Payment</label>
+<div class="results">
+<div class="result-line total">
+<span>10% of Promo Price</span>
+<span id="down">$0.00</span>
+</div>
+</div>
+</div>
+
+<div class="section" id="remainingSection">
+<label>Balance after Down Payment</label>
+<div class="results">
+<div class="result-line total">
+<span>Remaining Balance</span>
+<span id="remaining">$0.00</span>
+</div>
+</div>
+</div>
+
+<!-- Financing Option -->
+<div class="section" id="financingOption">
+<label>Financing Options (Ask for 0 payments and 0% for 12 Months)</label>
+<div class="results">
+<div class="result-line">
+<span>Term</span>
+<span>120 Months</span>
+</div>
+<div class="result-line">
+<span>var APR</span>
+<span>9.99%</span>
+</div>
+<div class="result-line highlight">
+<span>Estimated Monthly Payment *</span>
+<span id="monthlyPayment">$0.00 / mo</span>
+</div>
+<div class="small">
+*Based on promo price minus 10% down payment and var APR
+</div>
+</div>
+</div>
+
+<!-- Cash Payment Option -->
+<div class="section" id="cashSection" style="display:none;">
+<label>Cash Payment Schedule</label>
+<div class="results">
+<div class="result-line total">
+<span>Down Payment (1/3 of Promo Price)</span>
+<span id="cashDown">$0.00</span>
+</div>
+<div class="result-line total">
+<span>Due on Installation Day</span>
+<span id="cashInstall">$0.00</span>
+</div>
+<div class="result-line highlight">
+<span>Total Price</span>
+<span id="cashTotal">$0.00</span>
+</div>
+<div class="small">
+*Payments made by credit card are subject to 2.85% fee
+</div>
+</div>
+</div>
+
+</div>
 
 <script>
-/* ---------- SIDEBAR TABS ---------- */
-function openTab(evt, tabId){
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
-    document.getElementById(tabId).classList.add("active");
-    evt.currentTarget.classList.add("active");
-}
-
-/* ---------- RETAIL TOGGLE ---------- */
 function toggleRetail() {
-    const box = document.getElementById("retailBox");
-    box.style.display = box.style.display === "block" ? "none" : "block";
+const box = document.getElementById("retailBox");
+box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
-/* ---------- PRICING CALCULATOR ---------- */
 function calculate() {
-    const base = parseFloat(document.getElementById("basePrice").value) || 0;
-    const discountRate = parseFloat(document.getElementById("discount").value);
+const base = parseFloat(document.getElementById("basePrice").value) || 0;
+const discountRate = parseFloat(document.getElementById("discount").value);
 
-    document.getElementById("r10").textContent = `$${(base / 0.9).toFixed(2)}`;
-    document.getElementById("r15").textContent = `$${(base / 0.85).toFixed(2)}`;
-    document.getElementById("r20").textContent = `$${(base / 0.8).toFixed(2)}`;
+// Retail references
+const r10 = base / 0.9;
+const r15 = base / 0.85;
+const r20 = base / 0.8;
+document.getElementById("r10").textContent = `$${r10.toFixed(2)}`;
+document.getElementById("r15").textContent = `$${r15.toFixed(2)}`;
+document.getElementById("r20").textContent = `$${r20.toFixed(2)}`;
 
-    const par = base * 0.70;
-    document.getElementById("par").textContent = `$${par.toFixed(2)}`;
-    document.getElementById("par2").textContent = `$${par.toFixed(2)}`;
-    document.getElementById("par3").textContent = `$${par.toFixed(2)}`;
+// PAR
+const par = base * 0.70;
+document.getElementById("par").textContent = `$${par.toFixed(2)}`;
+document.getElementById("par2").textContent = `$${par.toFixed(2)}`;
+document.getElementById("par3").textContent = `$${par.toFixed(2)}`;
 
-    const savings = base * discountRate;
-    const promo = base - savings;
-    document.getElementById("savings").textContent = `$${savings.toFixed(2)}`;
-    document.getElementById("promo").textContent = `$${promo.toFixed(2)}`;
+// Discount math
+const savings = base * discountRate;
+const promo = base - savings;
+document.getElementById("savings").textContent = `$${savings.toFixed(2)}`;
+document.getElementById("promo").textContent = `$${promo.toFixed(2)}`;
 
-    const down = promo * 0.10;
-    document.getElementById("down").textContent = `$${down.toFixed(2)}`;
-    document.getElementById("remaining").textContent = `$${(promo - down).toFixed(2)}`;
-    const financed = promo - down;
-    const monthlyRate = 0.0999 / 12;
-    const months = 120;
-    let payment = 0;
-    if (financed > 0) {
-        payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-                  (Math.pow(1 + monthlyRate, months) - 1);
-    }
-    document.getElementById("monthlyPayment").textContent = `$${payment.toFixed(2)} / mo`;
+// Financing
+const down = promo * 0.10;
+document.getElementById("down").textContent = `$${down.toFixed(2)}`;
+document.getElementById("remaining").textContent = `$${(promo - down).toFixed(2)}`;
+const financed = promo - down;
+const annualRate = 0.0999;
+const monthlyRate = annualRate / 12;
+const months = 120;
+let payment = 0;
+if (financed > 0) {
+payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+(Math.pow(1 + monthlyRate, months) - 1);
+}
+document.getElementById("monthlyPayment").textContent = `$${payment.toFixed(2)} / mo`;
 
-    const cashDown = base / 3;
-    const cashRemaining = promo - cashDown;
-    const cashTotal = cashDown + cashRemaining;
-    document.getElementById("cashDown").textContent = `$${cashDown.toFixed(2)}`;
-    document.getElementById("cashInstall").textContent = `$${cashRemaining.toFixed(2)}`;
-    document.getElementById("cashTotal").textContent = `$${cashTotal.toFixed(2)}`;
+// Cash
+const cashDown = base / 3;
+const cashRemaining = promo - cashDown;
+const cashTotal = cashDown + cashRemaining;
+document.getElementById("cashDown").textContent = `$${cashDown.toFixed(2)}`;
+document.getElementById("cashInstall").textContent = `$${cashRemaining.toFixed(2)}`;
+document.getElementById("cashTotal").textContent = `$${cashTotal.toFixed(2)}`;
 }
 
-document.querySelectorAll("input, select").forEach(el => el.addEventListener("input", calculate));
+// Event listeners for calculation
+document.querySelectorAll("input, select").forEach(el =>
+el.addEventListener("input", calculate)
+);
 
+// Payment method dropdown
 document.getElementById("paymentMethod").addEventListener("change", function() {
-    const isCash = this.value === "cash";
-    document.getElementById("cashSection").style.display = isCash ? "block" : "none";
-    document.getElementById("financingOption").style.display = isCash ? "none" : "block";
-    document.getElementById("financeSection").style.display = isCash ? "none" : "block";
-    document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
+const isCash = this.value === "cash";
+document.getElementById("cashSection").style.display = isCash ? "block" : "none";
+document.getElementById("financingOption").style.display = isCash ? "none" : "block";
+document.getElementById("financeSection").style.display = isCash ? "none" : "block";
+document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
 });
 
+// Initial calculation
 calculate();
-
-/* ---------- CHECKLIST ---------- */
-const customerInput = document.getElementById('customer');
-customerInput.addEventListener('blur', () => {
-    if (customerInput.value.trim() !== '') customerInput.readOnly = true;
-});
-function resetChecklist() {
-    document.querySelectorAll('#checklistTab input[type="checkbox"]').forEach(cb => cb.checked = false);
-    customerInput.value = '';
-    customerInput.readOnly = false;
-}
 </script>
+
 </body>
 </html>
+
+
+
+
