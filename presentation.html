@@ -16,6 +16,21 @@ html, body {
     color: #fff;
 }
 
+/* Logo at top */
+.logo-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+}
+
+.logo-container img {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+}
+
 /* Full-screen slideshow */
 .slideshow-container {
     position: fixed;
@@ -96,6 +111,11 @@ html, body {
 </head>
 <body>
 
+<!-- Logo -->
+<div class="logo-container">
+  <img src="renuity2.png" alt="Company Logo">
+</div>
+
 <!-- Slideshow container -->
 <div class="slideshow-container">
   <div class="slide"><img src="photo1.jpg" alt="Photo 1"></div>
@@ -167,7 +187,7 @@ function showSlides(n) {
   dots[slideIndex-1].className += " active";
 }
 
-// ❌ Removed auto-slide
+// Auto-slide removed
 </script>
 
 </body>
