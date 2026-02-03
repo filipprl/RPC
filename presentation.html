@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Photo Presentation</title> <!-- Browser tab title -->
+<title>Photo Presentation</title>
 <style>
 html, body {
     margin: 0;
@@ -16,7 +16,6 @@ html, body {
     color: #fff;
 }
 
-/* Logo at top */
 .logo-container {
     position: fixed;
     top: 20px;
@@ -31,7 +30,6 @@ html, body {
     height: auto;
 }
 
-/* Fullscreen slideshow */
 .slideshow-container {
     position: fixed;
     top: 0;
@@ -55,11 +53,10 @@ html, body {
 .slide img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* maintain aspect ratio */
+    object-fit: contain;
     background: #111;
 }
 
-/* Navigation arrows */
 .prev, .next {
     cursor: pointer;
     position: absolute;
@@ -83,7 +80,6 @@ html, body {
 .prev { left: 20px; }
 .next { right: 20px; }
 
-/* Navigation dots */
 .dots {
     position: absolute;
     bottom: 30px;
@@ -110,12 +106,10 @@ html, body {
 </head>
 <body>
 
-<!-- Logo -->
 <div class="logo-container">
   <img src="renuity2.png" alt="Company Logo">
 </div>
 
-<!-- Slideshow container -->
 <div class="slideshow-container">
   <div class="slide"><img src="photo1.jpg" alt="Photo 1"></div>
   <div class="slide"><img src="photo2.jpg" alt="Photo 2"></div>
@@ -130,15 +124,11 @@ html, body {
   <div class="slide"><img src="photo11.jpg" alt="Photo 11"></div>
   <div class="slide"><img src="photo12.jpg" alt="Photo 12"></div>
   <div class="slide"><img src="photo13.jpg" alt="Photo 13"></div>
-  <div class="slide"><img src="photo14.jpg" alt="Photo 14"></div>
-  <div class="slide"><img src="photo15.jpg" alt="Photo 15"></div>
 
-  <!-- Navigation arrows -->
   <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
   <a class="next" onclick="plusSlides(1)">&#10095;</a>
 </div>
 
-<!-- Dots navigation -->
 <div class="dots">
   <span class="dot" onclick="currentSlide(1)"></span>
   <span class="dot" onclick="currentSlide(2)"></span>
@@ -153,43 +143,37 @@ html, body {
   <span class="dot" onclick="currentSlide(11)"></span>
   <span class="dot" onclick="currentSlide(12)"></span>
   <span class="dot" onclick="currentSlide(13)"></span>
-  <span class="dot" onclick="currentSlide(14)"></span>
-  <span class="dot" onclick="currentSlide(15)"></span>
 </div>
 
 <script>
 let slideIndex = 1;
 showSlides(slideIndex);
 
-// Next/previous controls
 function plusSlides(n) {
   showSlides(slideIndex += n);
 }
 
-// Dot controls
 function currentSlide(n) {
   showSlides(slideIndex = n);
 }
 
-// Show slides
 function showSlides(n) {
   const slides = document.getElementsByClassName("slide");
   const dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
+  if (n > slides.length) slideIndex = 1;
+  if (n < 1) slideIndex = slides.length;
+
   for (let i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
+    slides[i].style.display = "none";
   }
   for (let i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
+    dots[i].className = dots[i].className.replace(" active", "");
   }
+
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
 }
-
-// ❌ No auto-slide
 </script>
 
 </body>
 </html>
-
