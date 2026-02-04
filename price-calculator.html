@@ -75,11 +75,10 @@ border: 1px solid #ccc;
 
 .section { margin-top: 30px; }
 
-/* 🔹 BLUE BOXES – made thinner here */
 .results {
 margin-top: 15px;
 background: #f0f4ff;
-padding: 14px; /* was 20px */
+padding: 14px;
 border-radius: 14px;
 }
 
@@ -87,7 +86,7 @@ border-radius: 14px;
 display: flex;
 justify-content: space-between;
 font-size: 18px;
-margin: 6px 0; /* was 10px */
+margin: 6px 0;
 }
 
 .total { font-size: 22px; font-weight: bold; }
@@ -100,15 +99,14 @@ color: #0b5ed7;
 
 .small { font-size: 16px; opacity: 0.8; }
 
-/* Logo link fixes */
 .logo-link {
-  display: inline-block; /* only wraps the image */
-  text-decoration: none; /* remove underline */
-  color: inherit;        /* keep original text color */
+display: inline-block;
+text-decoration: none;
+color: inherit;
 }
 .logo-link img {
-  display: block;        /* removes small gap below image */
-  border: none;          /* removes any border in some browsers */
+display: block;
+border: none;
 }
 </style>
 </head>
@@ -118,7 +116,6 @@ color: #0b5ed7;
 
 <button class="toggle-btn" onclick="toggleRetail()">Filipp R Loginova</button>
 
-<!-- Retail Reference -->
 <div class="retail-reference" id="retailBox">
 <strong>Retail Reference</strong>
 
@@ -133,9 +130,8 @@ PAR : <span id="par3">$0.00</span>
 </div>
 
 <h1>
-  <a href="none" target="_blank" class="logo-link">
-    <img src="renew.png" alt="Pricing Calculator" style="max-width:260px; width:100%;">
-  </a>
+<img src="renew.png" alt="Pricing Calculator" style="max-width:260px;width:100%;">
+</a>
 </h1>
 
 <label>Base Price ($)</label>
@@ -161,7 +157,6 @@ PAR : <span id="par3">$0.00</span>
 </div>
 </div>
 
-<!-- Payment Method Dropdown above Down Payment -->
 <div class="section">
 <label>Payment Method</label>
 <select id="paymentMethod">
@@ -190,7 +185,6 @@ PAR : <span id="par3">$0.00</span>
 </div>
 </div>
 
-<!-- Financing Option -->
 <div class="section" id="financingOption">
 <label>Financing Options (Ask for 0 payments and 0% for 12 Months)</label>
 <div class="results">
@@ -212,7 +206,6 @@ PAR : <span id="par3">$0.00</span>
 </div>
 </div>
 
-<!-- Cash Payment Option -->
 <div class="section" id="cashSection" style="display:none;">
 <label>Cash Payment Schedule</label>
 <div class="results">
@@ -237,6 +230,14 @@ PAR : <span id="par3">$0.00</span>
 </div>
 
 <script>
+/* 🔹 ONLY ADDITION: money formatter */
+function money(v) {
+return `$${v.toLocaleString(undefined,{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+})}`;
+}
+
 function toggleRetail() {
 const box = document.getElementById("retailBox");
 box.style.display = box.style.display === "none" ? "block" : "none";
@@ -250,52 +251,54 @@ const discountRate = parseFloat(document.getElementById("discount").value);
 const r10 = base / 0.9;
 const r15 = base / 0.85;
 const r20 = base / 0.8;
-document.getElementById("r10").textContent = `$${r10.toFixed(2)}`;
-document.getElementById("r15").textContent = `$${r15.toFixed(2)}`;
-document.getElementById("r20").textContent = `$${r20.toFixed(2)}`;
+document.getElementById("r10").textContent = money(r10);
+document.getElementById("r15").textContent = money(r15);
+document.getElementById("r20").textContent = money(r20);
 
 // PAR
 const par = base * 0.70;
-document.getElementById("par").textContent = `$${par.toFixed(2)}`;
-document.getElementById("par2").textContent = `$${par.toFixed(2)}`;
-document.getElementById("par3").textContent = `$${par.toFixed(2)}`;
+document.getElementById("par").textContent = money(par);
+document.getElementById("par2").textContent = money(par);
+document.getElementById("par3").textContent = money(par);
 
 // Discount math
 const savings = base * discountRate;
 const promo = base - savings;
-document.getElementById("savings").textContent = `$${savings.toFixed(2)}`;
-document.getElementById("promo").textContent = `$${promo.toFixed(2)}`;
+document.getElementById("savings").textContent = money(savings);
+document.getElementById("promo").textContent = money(promo);
 
 // Financing
 const down = promo * 0.10;
-document.getElementById("down").textContent = `$${down.toFixed(2)}`;
-document.getElementById("remaining").textContent = `$${(promo - down).toFixed(2)}`;
+document.getElementById("down").textContent = money(down);
+document.getElementById("remaining").textContent = money(promo - down);
+
 const financed = promo - down;
 const annualRate = 0.0999;
 const monthlyRate = annualRate / 12;
 const months = 120;
+
 let payment = 0;
 if (financed > 0) {
 payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
 (Math.pow(1 + monthlyRate, months) - 1);
 }
-document.getElementById("monthlyPayment").textContent = `$${payment.toFixed(2)} / mo`;
+document.getElementById("monthlyPayment").textContent =
+`${money(payment)} / mo`;
 
 // Cash
 const cashDown = base / 3;
 const cashRemaining = promo - cashDown;
-const cashTotal = cashDown + cashRemaining;
-document.getElementById("cashDown").textContent = `$${cashDown.toFixed(2)}`;
-document.getElementById("cashInstall").textContent = `$${cashRemaining.toFixed(2)}`;
-document.getElementById("cashTotal").textContent = `$${cashTotal.toFixed(2)}`;
+document.getElementById("cashDown").textContent = money(cashDown);
+document.getElementById("cashInstall").textContent = money(cashRemaining);
+document.getElementById("cashTotal").textContent =
+money(cashDown + cashRemaining);
 }
 
-// Event listeners for calculation
+// Event listeners
 document.querySelectorAll("input, select").forEach(el =>
 el.addEventListener("input", calculate)
 );
 
-// Payment method dropdown
 document.getElementById("paymentMethod").addEventListener("change", function() {
 const isCash = this.value === "cash";
 document.getElementById("cashSection").style.display = isCash ? "block" : "none";
@@ -304,15 +307,8 @@ document.getElementById("financeSection").style.display = isCash ? "none" : "blo
 document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
 });
 
-// Initial calculation
 calculate();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
