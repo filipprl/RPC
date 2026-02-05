@@ -6,108 +6,85 @@
 <title>Pricing Calculator</title>
 
 <style>
-*, *::before, *::after {
-box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-background: #f5f7fa;
-margin: 0;
-padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 20px;
 }
 
 .container {
-max-width: 850px;
-margin: auto;
-background: #ffffff;
-padding: 28px;
-border-radius: 18px;
-box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-position: relative;
+  max-width: 850px;
+  margin: auto;
+  background: #ffffff;
+  padding: 26px;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+  position: relative;
 }
 
 .toggle-btn {
-position: absolute;
-top: 18px;
-right: 18px;
-background: #0b5ed7;
-color: #fff;
-border: none;
-border-radius: 10px;
-padding: 8px 12px;
-font-size: 14px;
-cursor: pointer;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: #0b5ed7;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .retail-reference {
-margin-top: 50px;
-background: #eef2ff;
-border-radius: 12px;
-padding: 14px 16px;
-font-size: 14px;
-line-height: 1.5;
-box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-display: none;
+  margin-top: 44px;
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  display: none;
 }
 
-.retail-reference strong {
-display: block;
-margin-bottom: 6px;
-}
+.retail-reference strong { display: block; margin-bottom: 6px; }
 
-h1 { text-align: center; }
+h1 { text-align: center; margin-bottom: 10px; }
 
 label {
-font-weight: 600;
-display: block;
-margin-top: 20px;
+  font-weight: 600;
+  display: block;
+  margin-top: 14px;
 }
 
 input, select {
-width: 100%;
-padding: 16px;
-font-size: 20px;
-margin-top: 8px;
-border-radius: 12px;
-border: 1px solid #ccc;
+  width: 100%;
+  padding: 14px;
+  font-size: 19px;
+  margin-top: 6px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
 }
 
-.section { margin-top: 30px; }
+.section { margin-top: 22px; }
 
-.results {
-margin-top: 15px;
-background: #f0f4ff;
-padding: 14px;
-border-radius: 14px;
-}
+.results { margin-top: 10px; background: #f0f4ff; padding: 12px; border-radius: 14px; }
+
+.promo-box { background: #e8efff; }
+.promo-box .total { color: #0b5ed7; }
 
 .result-line {
-display: flex;
-justify-content: space-between;
-font-size: 18px;
-margin: 6px 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  margin: 6px 0;
 }
 
 .total { font-size: 22px; font-weight: bold; }
-
-.highlight {
-font-size: 26px;
-font-weight: bold;
-color: #0b5ed7;
-}
-
+.highlight { font-size: 26px; font-weight: bold; color: #0b5ed7; }
 .small { font-size: 16px; opacity: 0.8; }
-
-.logo-link {
-display: inline-block;
-text-decoration: none;
-color: inherit;
-}
-.logo-link img {
-display: block;
-border: none;
-}
 </style>
 </head>
 <body>
@@ -118,24 +95,32 @@ border: none;
 
 <div class="retail-reference" id="retailBox">
 <strong>Retail Reference</strong>
-
 +10%: <span id="r10">$0.00</span><br>
 PAR : <span id="par">$0.00</span><br><br>
-
 +15%: <span id="r15">$0.00</span><br>
 PAR : <span id="par2">$0.00</span><br><br>
-
 +20%: <span id="r20">$0.00</span><br>
 PAR : <span id="par3">$0.00</span>
 </div>
 
 <h1>
-<img src="renew.png" alt="Pricing Calculator" style="max-width:260px;width:100%;">
-</a>
+<img src="renew.png" alt="Pricing Calculator" style="max-width:180px;width:100%;">
 </h1>
 
+<!-- Customer Name + Date side by side -->
+<div style="display:flex; gap:12px; align-items:flex-start;">
+  <div style="flex:1">
+    <label>Customer Name</label>
+    <input type="text" id="customerName" placeholder="Enter customer name" style="color:#0b5ed7;font-weight:700;">
+  </div>
+  <div style="width:180px;">
+    <label>Date</label>
+    <input type="text" id="currentDate" value="" style="color:#0b5ed7;font-weight:700;" readonly>
+  </div>
+</div>
+
 <label>Base Price ($)</label>
-<input type="number" id="basePrice" placeholder="Enter base price">
+<input type="text" id="basePrice" placeholder="Enter base price">
 
 <label>Discount</label>
 <select id="discount">
@@ -146,15 +131,18 @@ PAR : <span id="par3">$0.00</span>
 <option value="0.20">20% OFF</option>
 </select>
 
-<div class="results">
-<div class="result-line">
-<span>You Save</span>
-<span id="savings">$0.00</span>
-</div>
-<div class="result-line total">
-<span>Promo Price</span>
-<span id="promo">$0.00</span>
-</div>
+<!-- Centered Promo Box -->
+<div class="section">
+  <div class="results promo-box">
+    <div class="result-line">
+      <span>You Save</span>
+      <span id="savings">$0.00</span>
+    </div>
+    <div class="result-line total">
+      <span>Promo Price</span>
+      <span id="promo">$0.00</span>
+    </div>
+  </div>
 </div>
 
 <div class="section">
@@ -230,83 +218,107 @@ PAR : <span id="par3">$0.00</span>
 </div>
 
 <script>
-/* 🔹 ONLY ADDITION: money formatter */
 function money(v) {
-return `$${v.toLocaleString(undefined,{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-})}`;
+  return `$${v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 }
 
 function toggleRetail() {
-const box = document.getElementById("retailBox");
-box.style.display = box.style.display === "none" ? "block" : "none";
+  const box = document.getElementById("retailBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
 }
+
+function setCurrentDate() {
+  const now = new Date();
+  const options = { day: '2-digit', month: 'short', year: 'numeric' };
+  document.getElementById('currentDate').value = now.toLocaleDateString(undefined, options);
+}
+
+// Smart Base Price handling
+const baseInput = document.getElementById('basePrice');
+baseInput.addEventListener('input', function() {
+  // Allow only digits and dot while typing
+  let cursorPos = this.selectionStart;
+  let originalLength = this.value.length;
+  this.value = this.value.replace(/[^0-9.]/g,'');
+  let newLength = this.value.length;
+  cursorPos = cursorPos - (originalLength - newLength);
+  this.setSelectionRange(cursorPos, cursorPos);
+});
+
+baseInput.addEventListener('blur', function() {
+  // Format with $ + commas + 2 decimals on blur
+  let value = parseFloat(this.value);
+  if(!isNaN(value)) {
+    this.value = `$${value.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}`;
+  } else {
+    this.value = '';
+  }
+  calculate(); // recalc after formatting
+});
 
 function calculate() {
-const base = parseFloat(document.getElementById("basePrice").value) || 0;
-const discountRate = parseFloat(document.getElementById("discount").value);
+  const baseStr = document.getElementById("basePrice").value.replace(/,/g,'').replace('$','');
+  const base = parseFloat(baseStr) || 0;
+  const discountRate = parseFloat(document.getElementById("discount").value);
 
-// Retail references
-const r10 = base / 0.9;
-const r15 = base / 0.85;
-const r20 = base / 0.8;
-document.getElementById("r10").textContent = money(r10);
-document.getElementById("r15").textContent = money(r15);
-document.getElementById("r20").textContent = money(r20);
+  // Retail reference
+  const r10 = base / 0.9;
+  const r15 = base / 0.85;
+  const r20 = base / 0.8;
+  document.getElementById("r10").textContent = money(r10);
+  document.getElementById("r15").textContent = money(r15);
+  document.getElementById("r20").textContent = money(r20);
 
-// PAR
-const par = base * 0.70;
-document.getElementById("par").textContent = money(par);
-document.getElementById("par2").textContent = money(par);
-document.getElementById("par3").textContent = money(par);
+  const par = base * 0.70;
+  document.getElementById("par").textContent = money(par);
+  document.getElementById("par2").textContent = money(par);
+  document.getElementById("par3").textContent = money(par);
 
-// Discount math
-const savings = base * discountRate;
-const promo = base - savings;
-document.getElementById("savings").textContent = money(savings);
-document.getElementById("promo").textContent = money(promo);
+  // Discounts & promo
+  const savings = base * discountRate;
+  const promo = base - savings;
+  document.getElementById("savings").textContent = money(savings);
+  document.getElementById("promo").textContent = money(promo);
 
-// Financing
-const down = promo * 0.10;
-document.getElementById("down").textContent = money(down);
-document.getElementById("remaining").textContent = money(promo - down);
+  // Financing
+  const down = promo * 0.10;
+  document.getElementById("down").textContent = money(down);
+  document.getElementById("remaining").textContent = money(promo - down);
 
-const financed = promo - down;
-const annualRate = 0.0999;
-const monthlyRate = annualRate / 12;
-const months = 120;
+  const financed = promo - down;
+  const annualRate = 0.0999;
+  const monthlyRate = annualRate / 12;
+  const months = 120;
+  let payment = 0;
+  if (financed > 0) {
+    payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (Math.pow(1 + monthlyRate, months) - 1);
+  }
+  document.getElementById("monthlyPayment").textContent =
+    `${money(payment)} / mo`;
 
-let payment = 0;
-if (financed > 0) {
-payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-(Math.pow(1 + monthlyRate, months) - 1);
-}
-document.getElementById("monthlyPayment").textContent =
-`${money(payment)} / mo`;
-
-// Cash
-const cashDown = base / 3;
-const cashRemaining = promo - cashDown;
-document.getElementById("cashDown").textContent = money(cashDown);
-document.getElementById("cashInstall").textContent = money(cashRemaining);
-document.getElementById("cashTotal").textContent =
-money(cashDown + cashRemaining);
+  // Cash
+  const cashDown = base / 3;
+  const cashRemaining = promo - cashDown;
+  document.getElementById("cashDown").textContent = money(cashDown);
+  document.getElementById("cashInstall").textContent = money(cashRemaining);
+  document.getElementById("cashTotal").textContent =
+    money(cashDown + cashRemaining);
 }
 
 // Event listeners
-document.querySelectorAll("input, select").forEach(el =>
-el.addEventListener("input", calculate)
-);
+document.querySelectorAll("select").forEach(el => el.addEventListener("input", calculate));
 
 document.getElementById("paymentMethod").addEventListener("change", function() {
-const isCash = this.value === "cash";
-document.getElementById("cashSection").style.display = isCash ? "block" : "none";
-document.getElementById("financingOption").style.display = isCash ? "none" : "block";
-document.getElementById("financeSection").style.display = isCash ? "none" : "block";
-document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
+  const isCash = this.value === "cash";
+  document.getElementById("cashSection").style.display = isCash ? "block" : "none";
+  document.getElementById("financingOption").style.display = isCash ? "none" : "block";
+  document.getElementById("financeSection").style.display = isCash ? "none" : "block";
+  document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
 });
 
+// Initialize
+setCurrentDate();
 calculate();
 </script>
 
