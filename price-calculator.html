@@ -107,15 +107,14 @@ PAR : <span id="par3">$0.00</span>
 <img src="renew.png" alt="Pricing Calculator" style="max-width:180px;width:100%;">
 </h1>
 
-<!-- Customer Name + Date side by side -->
-<div style="display:flex; gap:12px; align-items:flex-start;">
+<div style="display:flex; gap:12px;">
   <div style="flex:1">
     <label>Customer Name</label>
     <input type="text" id="customerName" placeholder="Enter customer name" style="color:#0b5ed7;font-weight:700;">
   </div>
   <div style="width:180px;">
     <label>Date</label>
-    <input type="text" id="currentDate" value="" style="color:#0b5ed7;font-weight:700;" readonly>
+    <input type="text" id="currentDate" readonly style="color:#0b5ed7;font-weight:700;">
   </div>
 </div>
 
@@ -127,29 +126,29 @@ PAR : <span id="par3">$0.00</span>
 <option value="0">No Discount</option>
 <option value="0.05">05% OFF</option>
 <option value="0.10">10% OFF</option>
-<option value="0.10" data-label="Initial Visit Discount">10% OFF (Initial Visit Discount)</option>
+<option value="0.10">10% OFF (Initial Visit Discount)</option>
 <option value="0.15">15% OFF</option>
 <option value="0.20">20% OFF</option>
 </select>
 
-<!-- Centered Promo Box -->
 <div class="section">
-  <div class="results promo-box">
-    <div class="result-line">
-      <span>You Save</span>
-      <span id="savings">$0.00</span>
-    </div>
-    <div class="result-line total">
-      <span>Promo Price</span>
-      <span id="promo">$0.00</span>
-    </div>
-  </div>
+<div class="results promo-box">
+<div class="result-line">
+<span>You Save</span>
+<span id="savings">$0.00</span>
+</div>
+<div class="result-line total">
+<span>Promo Price</span>
+<span id="promo">$0.00</span>
+</div>
+</div>
 </div>
 
 <div class="section">
 <label>Payment Method</label>
 <select id="paymentMethod">
-<option value="finance" selected>Financing</option>
+<option value="finance120" selected>Financing 120</option>
+<option value="finance60">Financing 60</option>
 <option value="cash">Cash (Debit / Credit / Check)*</option>
 </select>
 </div>
@@ -175,22 +174,19 @@ PAR : <span id="par3">$0.00</span>
 </div>
 
 <div class="section" id="financingOption">
-<label>Financing Options (Ask for 0 payments and 0% for 12 Months)</label>
+<label>Financing Options (Ask for 0 payment and 0 interest for 12 months)</label>
 <div class="results">
 <div class="result-line">
 <span>Term</span>
-<span>120 Months</span>
+<span id="termDisplay">120 Months</span>
 </div>
 <div class="result-line">
 <span>var APR</span>
-<span>9.99%</span>
+<span id="aprDisplay">9.99%</span>
 </div>
 <div class="result-line highlight">
 <span>Estimated Monthly Payment *</span>
 <span id="monthlyPayment">$0.00 / mo</span>
-</div>
-<div class="small">
-*Based on promo price minus 10% down payment and var APR
 </div>
 </div>
 </div>
@@ -210,123 +206,119 @@ PAR : <span id="par3">$0.00</span>
 <span>Total Price</span>
 <span id="cashTotal">$0.00</span>
 </div>
-<div class="small">
-*Payments made by credit card are subject to 2.85% fee
-</div>
 </div>
 </div>
 
 </div>
 
 <script>
-function money(v) {
-  return `$${v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+function money(v){
+return `$${v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 }
 
-function toggleRetail() {
-  const box = document.getElementById("retailBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
+function toggleRetail(){
+const box=document.getElementById("retailBox");
+box.style.display=box.style.display==="none"?"block":"none";
 }
 
-function setCurrentDate() {
-  const now = new Date();
-  const options = { day: '2-digit', month: 'short', year: 'numeric' };
-  document.getElementById('currentDate').value = now.toLocaleDateString(undefined, options);
+function setCurrentDate(){
+const now=new Date();
+document.getElementById('currentDate').value=
+now.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});
 }
 
-// Smart Base Price handling
-const baseInput = document.getElementById('basePrice');
-baseInput.addEventListener('input', function() {
-  // Allow only digits and dot while typing
-  let cursorPos = this.selectionStart;
-  let originalLength = this.value.length;
-  this.value = this.value.replace(/[^0-9.]/g,'');
-  let newLength = this.value.length;
-  cursorPos = cursorPos - (originalLength - newLength);
-  this.setSelectionRange(cursorPos, cursorPos);
+const baseInput=document.getElementById("basePrice");
+
+baseInput.addEventListener("input",function(){
+this.value=this.value.replace(/[^0-9.]/g,'');
+calculate();
 });
 
-baseInput.addEventListener('blur', function() {
-  // Format with $ + commas + 2 decimals on blur
-  let value = parseFloat(this.value);
-  if(!isNaN(value)) {
-    this.value = `$${value.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}`;
-  } else {
-    this.value = '';
-  }
-  calculate(); // recalc after formatting
+baseInput.addEventListener("blur",function(){
+const parsed=parseFloat(this.value);
+if(!isNaN(parsed)){
+this.value=`$${parsed.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+}
 });
 
-function calculate() {
-  const baseStr = document.getElementById("basePrice").value.replace(/,/g,'').replace('$','');
-  const base = parseFloat(baseStr) || 0;
-  const discountRate = parseFloat(document.getElementById("discount").value);
+function calculate(){
 
-  // Retail reference
-  const r10 = base / 0.9;
-  const r15 = base / 0.85;
-  const r20 = base / 0.8;
-  document.getElementById("r10").textContent = money(r10);
-  document.getElementById("r15").textContent = money(r15);
-  document.getElementById("r20").textContent = money(r20);
+const raw=document.getElementById("basePrice").value.replace(/,/g,'').replace('$','');
+const parsed=parseFloat(raw);
+const base=isNaN(parsed)?0:parsed;
 
-  const par = base * 0.70;
-  document.getElementById("par").textContent = money(par);
-  document.getElementById("par2").textContent = money(par);
-  document.getElementById("par3").textContent = money(par);
+const discountRate=parseFloat(document.getElementById("discount").value);
 
-  // Discounts & promo
-  const savings = base * discountRate;
-  const promo = base - savings;
-  document.getElementById("savings").textContent = money(savings);
-  document.getElementById("promo").textContent = money(promo);
+/* Retail Reference */
+document.getElementById("r10").textContent=money(base/0.9);
+document.getElementById("r15").textContent=money(base/0.85);
+document.getElementById("r20").textContent=money(base/0.8);
 
-  // Financing
-  const down = promo * 0.10;
-  document.getElementById("down").textContent = money(down);
-  document.getElementById("remaining").textContent = money(promo - down);
+const par=base*0.70;
+document.getElementById("par").textContent=money(par);
+document.getElementById("par2").textContent=money(par);
+document.getElementById("par3").textContent=money(par);
 
-  const financed = promo - down;
-  const annualRate = 0.0999;
-  const monthlyRate = annualRate / 12;
-  const months = 120;
-  let payment = 0;
-  if (financed > 0) {
-    payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-      (Math.pow(1 + monthlyRate, months) - 1);
-  }
-  document.getElementById("monthlyPayment").textContent =
-    `${money(payment)} / mo`;
+/* Discount */
+const savings=base*discountRate;
+const promo=base-savings;
 
-  // Cash
-  const cashDown = base / 3;
-  const cashRemaining = promo - cashDown;
-  document.getElementById("cashDown").textContent = money(cashDown);
-  document.getElementById("cashInstall").textContent = money(cashRemaining);
-  document.getElementById("cashTotal").textContent =
-    money(cashDown + cashRemaining);
+document.getElementById("savings").textContent=money(savings);
+document.getElementById("promo").textContent=money(promo);
+
+/* Financing Selection */
+const method=document.getElementById("paymentMethod").value;
+
+let annualRate=0.0999;
+let months=120;
+
+if(method==="finance60"){
+annualRate=0.0699;
+months=60;
 }
 
-// Event listeners
-document.querySelectorAll("select").forEach(el => el.addEventListener("input", calculate));
+document.getElementById("termDisplay").textContent=`${months} Months`;
+document.getElementById("aprDisplay").textContent=`${(annualRate*100).toFixed(2)}%`;
 
-document.getElementById("paymentMethod").addEventListener("change", function() {
-  const isCash = this.value === "cash";
-  document.getElementById("cashSection").style.display = isCash ? "block" : "none";
-  document.getElementById("financingOption").style.display = isCash ? "none" : "block";
-  document.getElementById("financeSection").style.display = isCash ? "none" : "block";
-  document.getElementById("remainingSection").style.display = isCash ? "none" : "block";
+const down=promo*0.10;
+const remaining=promo-down;
+
+document.getElementById("down").textContent=money(down);
+document.getElementById("remaining").textContent=money(remaining);
+
+let payment=0;
+if(remaining>0){
+const monthlyRate=annualRate/12;
+payment=remaining*(monthlyRate*Math.pow(1+monthlyRate,months))/
+(Math.pow(1+monthlyRate,months)-1);
+}
+
+document.getElementById("monthlyPayment").textContent=`${money(payment)} / mo`;
+
+/* Cash */
+const cashDown=promo/3;
+const cashInstall=promo-cashDown;
+document.getElementById("cashDown").textContent=money(cashDown);
+document.getElementById("cashInstall").textContent=money(cashInstall);
+document.getElementById("cashTotal").textContent=money(promo);
+}
+
+document.querySelectorAll("select").forEach(el=>{
+el.addEventListener("change",calculate);
 });
 
-// Initialize
+document.getElementById("paymentMethod").addEventListener("change",function(){
+const isCash=this.value==="cash";
+document.getElementById("cashSection").style.display=isCash?"block":"none";
+document.getElementById("financingOption").style.display=isCash?"none":"block";
+document.getElementById("financeSection").style.display=isCash?"none":"block";
+document.getElementById("remainingSection").style.display=isCash?"none":"block";
+calculate();
+});
+
 setCurrentDate();
 calculate();
 </script>
 
 </body>
 </html>
-
-
-
-
-
